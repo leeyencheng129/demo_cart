@@ -1,28 +1,60 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header title="購物車實例"></Header>
+
+    <!-- 循環每個商品的資訊 -->
+    <Goods
+      v-for="item in list"
+      :key="item.id"
+      :id="item.id"
+      :title="item.goods_name"
+      :pic="item.goods_img"
+      :price="item.goods_price"
+      :status="item.goods_state"
+      @state-change="getNewState"
+    ></Goods>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Reset from "@/assets/css/style.css";
+//導入axios
+import axios from "axios";
+//導入組件
+import Header from "@/components/Header/Header.vue";
+import Goods from "@/components/Goods/Goods.vue";
 
 export default {
-  name: 'App',
+  data() {
+    return {
+      list: [],
+    };
+  },
+  created() {
+    this.initCartList();
+  },
+  methods: {
+    async initCartList() {
+      const { data: res } = await axios.get("https://www.escook.cn/api/cart");
+      console.log(res);
+      if (res.status === 200) {
+        this.list = res.list;
+      }
+    },
+    getNewState(val) {
+      console.log(val);
+    },
+  },
   components: {
-    HelloWorld
-  }
-}
+    Header,
+    Goods,
+  },
+};
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin: 0;
+  padding: 0;
 }
 </style>
